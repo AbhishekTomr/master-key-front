@@ -9,3 +9,5 @@ export enum ButtonType {
   CONTAINED = "contained",
   OUTLINED = "outlined",
 }
+
+export const IS_LOGGED_IN = "isLoggedIn";

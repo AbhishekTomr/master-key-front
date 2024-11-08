@@ -8,16 +8,25 @@ interface IButtonProps {
   className?: string;
   variant?: ButtonType;
   children: React.ReactNode;
+  onClick: (args?: any[]) => any;
 }
 
 const Button = ({
   size = Size.SMALL,
   className = "",
   variant = ButtonType.CONTAINED,
+  onClick,
   children,
 }: IButtonProps) => {
   return (
-    <MuiButton size={size} variant={variant} className={`btn ${className}`}>
+    <MuiButton
+      size={size}
+      variant={variant}
+      className={`btn ${className}`}
+      onClick={() => {
+        onClick();
+      }}
+    >
       {children}
     </MuiButton>
   );
