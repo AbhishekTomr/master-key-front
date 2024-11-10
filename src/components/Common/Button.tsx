@@ -9,6 +9,7 @@ interface IButtonProps {
   variant?: ButtonType;
   children: React.ReactNode;
   onClick: (args?: any[]) => any;
+  disabled?: boolean;
 }
 
 const Button = ({
@@ -17,6 +18,7 @@ const Button = ({
   variant = ButtonType.CONTAINED,
   onClick,
   children,
+  disabled = false,
 }: IButtonProps) => {
   return (
     <MuiButton
@@ -26,6 +28,7 @@ const Button = ({
       onClick={() => {
         onClick();
       }}
+      disabled={disabled}
     >
       {children}
     </MuiButton>

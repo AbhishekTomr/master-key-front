@@ -15,28 +15,55 @@ import { IUserLogin, IUserSignUp } from "./types";
 import { AuthType } from "./constant";
 import { Link } from "react-router-dom";
 import { IUserContext, UserContext } from "../../context/user.context";
-import { Exception } from "sass";
 import { IResponseHandlerWrapper } from "../../helpers/responseHandler";
+import { isEmail, isEmpty } from "validator";
 
 const authService = new AuthService();
 
+interface IValue {
+  value: string;
+  error: string;
+}
+
 type Props = {};
 
-const Auth = (props: Props) => {
+const emptyState: IValue = {
+  value: "",
+  error: "",
+};
+
+const Auth = ({}: Props) => {
   const { authType } = useParams();
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [firstName, setFirstName] = useState<IValue>(emptyState);
+  const [lastName, setLastName] = useState<IValue>(emptyState);
+  const [password, setPassword] = useState<IValue>(emptyState);
+  const [email, setEmail] = useState<IValue>(emptyState);
+  const [confirmPassword, setConfirmPassword] = useState<IValue>(emptyState);
   const { setIsLoggedIn } = useContext<IUserContext>(UserContext);
 
   const resetState = () => {
-    setFirstName("");
-    setLastName("");
-    setPassword("");
-    setEmail("");
-    setConfirmPassword("");
+    setFirstName(emptyState);
+    setLastName(emptyState);
+    setPassword(emptyState);
+    setEmail(emptyState);
+    setConfirmPassword(emptyState);
+  };
+
+  const validateField = (key: string, value: string) => {
+    switch (key) {
+      case "first_name":
+      case "last_name":
+      case "password":
+        return isEmpty(value) ? "value must not be empty" : null;
+      case "email":
+        if (isEmpty(value)) return "value must not be empty";
+        return isEmail(value) ? null : "must be a valid email";
+      case "confirm_password":
+        if (isEmpty(value)) return "value must not be empty";
+        return value === password.value ? null : "passwords do not match";
+      default:
+        return null;
+    }
   };
 
   const formType: AuthType = useMemo(() => {
@@ -45,16 +72,53 @@ const Auth = (props: Props) => {
 
   const navigate = useNavigate();
 
+  const validForm = useMemo(() => {
+    const hasValues = !isEmpty(email.value) && !isEmpty(password.value);
+    const noErrors = isEmpty(email.error) && isEmpty(password.error);
+    if (formType === AuthType.LOGIN) {
+      return hasValues && noErrors;
+    }
+    const hasValueSignUp =
+      hasValues &&
+      !isEmpty(firstName.value) &&
+      !isEmpty(lastName.value) &&
+      !isEmpty(confirmPassword.value);
+    const noErrorSignUp =
+      noErrors &&
+      isEmpty(firstName.error) &&
+      isEmpty(lastName.error) &&
+      isEmpty(confirmPassword.error);
+    return hasValueSignUp && noErrorSignUp;
+  }, [firstName, lastName, email, password, confirmPassword, formType]);
+
+  const onValueChange = (key: string, value: string) => {
+    const isValid = validateField(key, value);
+    switch (key) {
+      case "first_name":
+        return setFirstName({ value, error: !isValid ? "" : isValid });
+      case "last_name":
+        return setLastName({ value, error: !isValid ? "" : isValid });
+      case "email":
+        return setEmail({ value, error: !isValid ? "" : isValid });
+      case "password":
+        return setPassword({ value, error: !isValid ? "" : isValid });
+      case "confirm_password":
+        return setConfirmPassword({ value, error: !isValid ? "" : isValid });
+      default:
+        break;
+    }
+  };
+
   const handleFormSubmit = useCallback(
     async (formType: AuthType) => {
       //TODO : add some validation
 
       if (formType === AuthType.SINGUP) {
         const formData = {
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          password,
+          first_name: firstName.value,
+          last_name: lastName.value,
+          email: email.value,
+          password: password.value,
         };
         authService
           .signUp(formData as IUserSignUp)
@@ -66,8 +130,8 @@ const Auth = (props: Props) => {
       }
       if (formType === AuthType.LOGIN) {
         const formData = {
-          email,
-          password,
+          email: email.value,
+          password: password.value,
         };
         authService
           .login(formData as IUserLogin)
@@ -96,45 +160,47 @@ const Auth = (props: Props) => {
             <TextFields
               id={"first_name"}
               label={"First Name"}
-              value={firstName}
-              onChange={setFirstName}
-              error={"hey check this out"}
+              value={firstName.value}
+              onChange={onValueChange}
+              error={firstName.error}
             />
             <TextFields
               id={"last_name"}
               label={"Last Name"}
-              value={lastName}
-              onChange={setLastName}
-              error={"hey check this out"}
+              value={lastName.value}
+              onChange={onValueChange}
+              error={lastName.error}
             />
           </>
         )}
         <TextFields
           id={"email"}
           label={"Email"}
-          value={email}
-          onChange={setEmail}
-          error={"hey check this out"}
+          value={email.value}
+          onChange={onValueChange}
+          error={email.error}
         />
         <TextFields
           id={"password"}
           label={"Password"}
-          value={password}
-          onChange={setPassword}
-          error={"hey check this out"}
+          value={password.value}
+          onChange={onValueChange}
+          error={password.error}
+          isPassword={true}
         />
         {formType === AuthType.SINGUP && (
           <TextFields
-            id={"confirm password"}
+            id={"confirm_password"}
             label={"Confirm Password"}
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            error={"hey check this out"}
+            value={confirmPassword.value}
+            onChange={onValueChange}
+            error={confirmPassword.error}
           />
         )}
         <Button
           className="submit-btn"
           onClick={() => handleFormSubmit(formType)}
+          disabled={!validForm}
         >
           {formType}
         </Button>
