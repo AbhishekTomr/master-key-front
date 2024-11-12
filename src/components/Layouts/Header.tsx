@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import "./Header.scss";
 import { emptyUser, UserContext } from "../../context/user.context";
 import { Box, AppBar, Toolbar, IconButton } from "@mui/material";
@@ -16,16 +16,20 @@ interface IHeader {}
 
 const Header = (props: IHeader) => {
   const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const logout = useCallback(() => {
+    setLoading(true);
     authService
       .logout()
       .then((res) => {
         setIsLoggedIn(false);
+        setLocalStorage(IS_LOGGED_IN, false);
         navigate("/auth/login");
       })
-      .catch((err) => console.error());
+      .catch((err) => console.error())
+      .finally(() => setLoading(false));
   }, [authService]);
 
   return (
@@ -49,6 +53,7 @@ const Header = (props: IHeader) => {
               <Button
                 className="inherit-btn toolbar-btn logout"
                 onClick={logout}
+                isLoading={loading}
               >
                 Logout
               </Button>

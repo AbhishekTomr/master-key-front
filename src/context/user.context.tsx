@@ -61,7 +61,7 @@ export const UserContextProvider = ({ children }: IUserContextProvider) => {
 
   useEffect(() => {
     setUserInfo(isLoggedIn);
-    setLocalStorage(IS_LOGGED_IN, isLoggedIn);
+    // setLocalStorage(IS_LOGGED_IN, isLoggedIn);
   }, [isLoggedIn]);
 
   useEffect(() => {
