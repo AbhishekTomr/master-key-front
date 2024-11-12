@@ -18,6 +18,7 @@ interface ITextInputProps {
   className?: string;
   error: string;
   isPassword?: boolean;
+  successText?: string;
 }
 
 const TextFields = ({
@@ -28,6 +29,7 @@ const TextFields = ({
   onChange,
   error,
   isPassword = false,
+  successText = "",
 }: ITextInputProps) => {
   const timerRef = useRef<any>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -63,6 +65,11 @@ const TextFields = ({
           }
         />
         {!_.isEmpty(error) && <FormHelperText error>{error}</FormHelperText>}
+        {!_.isEmpty(successText) && (
+          <FormHelperText className="success-text">
+            {successText}
+          </FormHelperText>
+        )}
       </FormControl>
     );
   }
@@ -72,6 +79,9 @@ const TextFields = ({
       <InputLabel htmlFor={id}>{label}</InputLabel>
       <Input id={id} onChange={onTextChange} label={label} />
       {!_.isEmpty(error) && <FormHelperText error>{error}</FormHelperText>}
+      {!_.isEmpty(successText) && (
+        <FormHelperText className="success-text">{successText}</FormHelperText>
+      )}
     </FormControl>
   );
 };

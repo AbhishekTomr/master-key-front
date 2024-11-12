@@ -6,6 +6,6 @@ export interface IUserSignUp {
 }
 
 export interface IUserLogin {
-  email: string;
+  identifier: string;
   password: string;
 }

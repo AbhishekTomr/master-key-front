@@ -1,6 +1,6 @@
 import React from "react";
 import { Size, ButtonType } from "../../constants";
-import { Button as MuiButton } from "@mui/material";
+import { Button as MuiButton, CircularProgress } from "@mui/material";
 import "./Button.scss";
 
 interface IButtonProps {
@@ -10,6 +10,7 @@ interface IButtonProps {
   children: React.ReactNode;
   onClick: (args?: any[]) => any;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 const Button = ({
@@ -19,6 +20,7 @@ const Button = ({
   onClick,
   children,
   disabled = false,
+  isLoading = false,
 }: IButtonProps) => {
   return (
     <MuiButton
@@ -30,7 +32,11 @@ const Button = ({
       }}
       disabled={disabled}
     >
-      {children}
+      {isLoading ? (
+        <CircularProgress size={"small"} className="loader" />
+      ) : (
+        children
+      )}
     </MuiButton>
   );
 };

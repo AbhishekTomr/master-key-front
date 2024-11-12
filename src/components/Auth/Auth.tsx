@@ -17,6 +17,9 @@ import { Link } from "react-router-dom";
 import { IUserContext, UserContext } from "../../context/user.context";
 import { IResponseHandlerWrapper } from "../../helpers/responseHandler";
 import { isEmail, isEmpty } from "validator";
+import _ from "lodash";
+import { setLocalStorage } from "../../helpers/localStorage";
+import { IS_LOGGED_IN } from "../../constants";
 
 const authService = new AuthService();
 
@@ -38,8 +41,11 @@ const Auth = ({}: Props) => {
   const [lastName, setLastName] = useState<IValue>(emptyState);
   const [password, setPassword] = useState<IValue>(emptyState);
   const [email, setEmail] = useState<IValue>(emptyState);
+  const [username, setUserName] = useState<IValue>(emptyState);
+  const [identifier, setIdentifier] = useState<IValue>(emptyState);
   const [confirmPassword, setConfirmPassword] = useState<IValue>(emptyState);
   const { setIsLoggedIn } = useContext<IUserContext>(UserContext);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const resetState = () => {
     setFirstName(emptyState);
@@ -54,6 +60,8 @@ const Auth = ({}: Props) => {
       case "first_name":
       case "last_name":
       case "password":
+      case "user_name":
+      case "identifier":
         return isEmpty(value) ? "value must not be empty" : null;
       case "email":
         if (isEmpty(value)) return "value must not be empty";
@@ -73,23 +81,36 @@ const Auth = ({}: Props) => {
   const navigate = useNavigate();
 
   const validForm = useMemo(() => {
-    const hasValues = !isEmpty(email.value) && !isEmpty(password.value);
-    const noErrors = isEmpty(email.error) && isEmpty(password.error);
+    const hasValues = !isEmpty(identifier.value) && !isEmpty(password.value);
+    const noErrors = isEmpty(identifier.error) && isEmpty(password.error);
     if (formType === AuthType.LOGIN) {
       return hasValues && noErrors;
     }
     const hasValueSignUp =
-      hasValues &&
+      !isEmpty(email.value) &&
+      !isEmpty(password.value) &&
       !isEmpty(firstName.value) &&
       !isEmpty(lastName.value) &&
+      !isEmpty(username.value) &&
       !isEmpty(confirmPassword.value);
     const noErrorSignUp =
-      noErrors &&
+      isEmpty(email.error) &&
+      isEmpty(password.error) &&
       isEmpty(firstName.error) &&
       isEmpty(lastName.error) &&
+      isEmpty(username.error) &&
       isEmpty(confirmPassword.error);
     return hasValueSignUp && noErrorSignUp;
-  }, [firstName, lastName, email, password, confirmPassword, formType]);
+  }, [
+    firstName,
+    lastName,
+    email,
+    password,
+    username,
+    confirmPassword,
+    formType,
+    identifier,
+  ]);
 
   const onValueChange = (key: string, value: string) => {
     const isValid = validateField(key, value);
@@ -100,10 +121,14 @@ const Auth = ({}: Props) => {
         return setLastName({ value, error: !isValid ? "" : isValid });
       case "email":
         return setEmail({ value, error: !isValid ? "" : isValid });
+      case "user_name":
+        return setUserName({ value, error: !isValid ? "" : isValid });
       case "password":
         return setPassword({ value, error: !isValid ? "" : isValid });
       case "confirm_password":
         return setConfirmPassword({ value, error: !isValid ? "" : isValid });
+      case "identifier":
+        return setIdentifier({ value, error: !isValid ? "" : isValid });
       default:
         break;
     }
@@ -112,13 +137,14 @@ const Auth = ({}: Props) => {
   const handleFormSubmit = useCallback(
     async (formType: AuthType) => {
       //TODO : add some validation
-
+      setLoading(true);
       if (formType === AuthType.SINGUP) {
         const formData = {
           first_name: firstName.value,
           last_name: lastName.value,
           email: email.value,
           password: password.value,
+          user_name: username.value,
         };
         authService
           .signUp(formData as IUserSignUp)
@@ -126,11 +152,12 @@ const Auth = ({}: Props) => {
             resetState();
             navigate("/auth/login");
           })
-          .catch((err) => console.error(err));
+          .catch((err) => console.error(err))
+          .finally(() => setLoading(false));
       }
       if (formType === AuthType.LOGIN) {
         const formData = {
-          email: email.value,
+          identifier: identifier.value,
           password: password.value,
         };
         authService
@@ -138,15 +165,35 @@ const Auth = ({}: Props) => {
           .then((res: IResponseHandlerWrapper) => {
             setIsLoggedIn(true);
             resetState();
+            setLocalStorage(IS_LOGGED_IN, true);
             navigate("/profile");
           })
           .catch((err) => {
             console.error(err);
-          });
+          })
+          .finally(() => setLoading(false));
       }
     },
     [firstName, lastName, email, password, confirmPassword, formType]
   );
+
+  useEffect(() => {
+    if (!username.value.length) return;
+    authService
+      .verifyUserName(username.value)
+      .then(({ data }: IResponseHandlerWrapper) => {
+        const { status, message } = data;
+        if (!status)
+          return setUserName((oldState: IValue) => ({
+            ...oldState,
+            error: message,
+          }));
+        setUserName((oldState: IValue) => ({
+          ...oldState,
+          error: "",
+        }));
+      });
+  }, [username.value]);
 
   return (
     <Card className="form-wrapper">
@@ -171,15 +218,36 @@ const Auth = ({}: Props) => {
               onChange={onValueChange}
               error={lastName.error}
             />
+            <TextFields
+              id={"email"}
+              label={"Email"}
+              value={email.value}
+              onChange={onValueChange}
+              error={email.error}
+            />
+            <TextFields
+              id={"user_name"}
+              label={"User Name"}
+              value={username.value}
+              onChange={onValueChange}
+              error={username.error}
+              successText={
+                !_.isEmpty(username.value) && _.isEmpty(username.error)
+                  ? "username avaiable!!!"
+                  : ""
+              }
+            />
           </>
         )}
-        <TextFields
-          id={"email"}
-          label={"Email"}
-          value={email.value}
-          onChange={onValueChange}
-          error={email.error}
-        />
+        {formType !== AuthType.SINGUP && (
+          <TextFields
+            id={"identifier"}
+            label={"Email or Username"}
+            value={identifier.value}
+            onChange={onValueChange}
+            error={identifier.error}
+          />
+        )}
         <TextFields
           id={"password"}
           label={"Password"}
@@ -195,12 +263,14 @@ const Auth = ({}: Props) => {
             value={confirmPassword.value}
             onChange={onValueChange}
             error={confirmPassword.error}
+            isPassword={true}
           />
         )}
         <Button
           className="submit-btn"
           onClick={() => handleFormSubmit(formType)}
           disabled={!validForm}
+          isLoading={loading}
         >
           {formType}
         </Button>

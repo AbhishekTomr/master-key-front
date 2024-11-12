@@ -1,6 +1,11 @@
+@import "../../variables";
+
 .text-form-control {
   margin-bottom: 10px !important;
   input {
     height: 20px !important;
+  }
+  .success-text {
+    color: $success;
   }
 }

@@ -54,4 +54,17 @@ export class AuthService {
       requestOptions as RequestInit
     ).then(responseHandler);
   }
+
+  async verifyUserName(user_name: string) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ user_name }),
+    };
+    return fetch(
+      `${this.endpoint}/auth/verify/username`,
+      requestOptions as RequestInit
+    ).then(responseHandler);
+  }
 }
