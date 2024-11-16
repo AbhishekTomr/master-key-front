@@ -1,0 +1,12 @@
+.google-login-btn {
+  width: 100%;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .google-icon {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+  }
+}

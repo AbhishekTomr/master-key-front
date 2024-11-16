@@ -33,15 +33,8 @@ export class AuthService {
     ).then(responseHandler);
   }
 
-  async googleLogin(): Promise<any> {
-    const requestOptions = {
-      method: "GET",
-      credentials: "include",
-    };
-    return fetch(
-      `${this.endpoint}/auth/google/login`,
-      requestOptions as RequestInit
-    ).then(responseHandler);
+  async googleLogin() {
+    window.location.href = `${this.endpoint}/auth/google/login`;
   }
 
   async getUserInfo(): Promise<any> {

@@ -12,8 +12,6 @@ interface IAppWrapperProps {}
 const AppWrapper = ({}: IAppWrapperProps) => {
   const { isLoggedIn } = useContext<IUserContext>(UserContext);
 
-  console.log("isLoggedIn", isLoggedIn);
-
   return (
     <div>
       <Routes>

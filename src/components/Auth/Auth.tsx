@@ -280,6 +280,11 @@ const Auth = ({}: Props) => {
             {formType === AuthType.LOGIN ? "Sign Up" : "Login"}
           </Link>
         </div>
+        <div className="divider">
+          <div className="h-div left-div"></div>
+          <div className="or">Or</div>
+          <div className="h-div right-div"></div>
+        </div>
         <div className="google-login-wrap">
           <GoogleLoginBtn />
         </div>

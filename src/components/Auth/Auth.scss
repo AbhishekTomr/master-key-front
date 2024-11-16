@@ -28,5 +28,25 @@
         color: #0000ff;
       }
     }
+    .divider {
+      margin: 10px 0;
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .h-div {
+        border-top: 1px solid gray;
+        flex-grow: 1;
+      }
+      .left-div {
+        margin-right: 10px;
+      }
+      .right-div {
+        margin-left: 10px;
+      }
+      .or {
+        font-weight: bold;
+      }
+    }
   }
 }

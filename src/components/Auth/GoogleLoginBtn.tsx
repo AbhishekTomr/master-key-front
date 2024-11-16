@@ -1,27 +1,26 @@
-import React, { useState } from "react";
 import Button from "../Common/Button";
 import { AuthService } from "../../services/auth.service";
+import { Google } from "@mui/icons-material";
+import { Size } from "../../constants";
+import "./GoogleLoginBtn.scss";
 
 const authService = new AuthService();
 
 interface IGoogleLoginBtn {}
 
 const GoogleLoginBtn = (props: IGoogleLoginBtn) => {
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const loginViaGoogle = async () => {
-    try {
-      setLoading(true);
-      const response = await authService.googleLogin();
-      console.log("response", response);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return <a href="http://localhost:3000/auth/google/login">login via google</a>;
+  return (
+    <Button
+      onClick={() => authService.googleLogin()}
+      size={Size.LARGE}
+      className={"google-login-btn"}
+    >
+      <span className="google-icon">
+        <Google />
+      </span>{" "}
+      login via google
+    </Button>
+  );
 };
 
 export default GoogleLoginBtn;
