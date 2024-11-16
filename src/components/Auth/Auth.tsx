@@ -18,8 +18,7 @@ import { IUserContext, UserContext } from "../../context/user.context";
 import { IResponseHandlerWrapper } from "../../helpers/responseHandler";
 import { isEmail, isEmpty } from "validator";
 import _ from "lodash";
-import { setLocalStorage } from "../../helpers/localStorage";
-import { IS_LOGGED_IN } from "../../constants";
+import GoogleLoginBtn from "./GoogleLoginBtn";
 
 const authService = new AuthService();
 
@@ -165,7 +164,6 @@ const Auth = ({}: Props) => {
           .then((res: IResponseHandlerWrapper) => {
             setIsLoggedIn(true);
             resetState();
-            setLocalStorage(IS_LOGGED_IN, true);
             navigate("/profile");
           })
           .catch((err) => {
@@ -281,6 +279,9 @@ const Auth = ({}: Props) => {
           >
             {formType === AuthType.LOGIN ? "Sign Up" : "Login"}
           </Link>
+        </div>
+        <div className="google-login-wrap">
+          <GoogleLoginBtn />
         </div>
       </form>
     </Card>

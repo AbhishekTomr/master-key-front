@@ -6,11 +6,11 @@ import {
   useState,
 } from "react";
 import { IUser } from "../types";
-import _ from "lodash";
+import _, { isEmpty } from "lodash";
 import { AuthService } from "../services/auth.service";
-import { getLocalStorage, setLocalStorage } from "../helpers/localStorage";
-import { IS_LOGGED_IN } from "../constants";
 import { IResponseHandlerWrapper } from "../helpers/responseHandler";
+import { getCookie } from "../helpers/cookie";
+import { AUTH_COOKIE_NAME } from "../constants";
 
 const authService = new AuthService();
 
@@ -61,13 +61,12 @@ export const UserContextProvider = ({ children }: IUserContextProvider) => {
 
   useEffect(() => {
     setUserInfo(isLoggedIn);
-    // setLocalStorage(IS_LOGGED_IN, isLoggedIn);
   }, [isLoggedIn]);
 
   useEffect(() => {
     //for the first time fetch it from localStorage
-    const isLoggedIn = getLocalStorage(IS_LOGGED_IN);
-    setIsLoggedIn(isLoggedIn);
+    const loggedInCookie = getCookie(AUTH_COOKIE_NAME);
+    setIsLoggedIn(!isEmpty(loggedInCookie));
   }, []);
 
   return (

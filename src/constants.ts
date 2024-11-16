@@ -10,4 +10,4 @@ export enum ButtonType {
   OUTLINED = "outlined",
 }
 
-export const IS_LOGGED_IN = "isLoggedIn";
+export const AUTH_COOKIE_NAME = "tau";
