@@ -19,13 +19,9 @@ import { IResponseHandlerWrapper } from "../../helpers/responseHandler";
 import { isEmail, isEmpty } from "validator";
 import _ from "lodash";
 import GoogleLoginBtn from "./GoogleLoginBtn";
+import { IValue } from "./types";
 
 const authService = new AuthService();
-
-interface IValue {
-  value: string;
-  error: string;
-}
 
 type Props = {};
 

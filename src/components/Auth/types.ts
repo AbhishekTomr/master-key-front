@@ -9,3 +9,8 @@ export interface IUserLogin {
   identifier: string;
   password: string;
 }
+
+export interface IValue {
+  value: string;
+  error: string;
+}

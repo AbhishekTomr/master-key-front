@@ -32,12 +32,13 @@ const TextFields = ({
   successText = "",
 }: ITextInputProps) => {
   const timerRef = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const onTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (timerRef.current) clearTimeout(timerRef.current);
+    const { value } = event.target;
     timerRef.current = setTimeout(() => {
-      const { value } = event.target;
       onChange(id, value);
     }, 300);
   };
@@ -77,7 +78,13 @@ const TextFields = ({
   return (
     <FormControl className={`text-form-control ${className}`}>
       <InputLabel htmlFor={id}>{label}</InputLabel>
-      <Input id={id} onChange={onTextChange} label={label} />
+      <Input
+        id={id}
+        onChange={onTextChange}
+        label={label}
+        defaultValue={value}
+        ref={inputRef}
+      />
       {!_.isEmpty(error) && <FormHelperText error>{error}</FormHelperText>}
       {!_.isEmpty(successText) && (
         <FormHelperText className="success-text">{successText}</FormHelperText>
