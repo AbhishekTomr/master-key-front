@@ -6,6 +6,7 @@ import Button from "../Common/Button";
 import _ from "lodash";
 import { AuthService } from "../../services/auth.service";
 import { useNavigate } from "react-router-dom";
+import { VpnKey as Icon } from "@mui/icons-material";
 
 const authService = new AuthService();
 
@@ -40,10 +41,19 @@ const Header = (props: IHeader) => {
         <Toolbar
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: "space-between",
           }}
           className="toolbar"
         >
+          <IconButton onClick={() => navigate("/")}>
+            <Icon
+              sx={{
+                color: "#ffffff",
+                fontSize: "30px",
+                width: "40px",
+              }}
+            />
+          </IconButton>
           {
             isLoggedIn && (
               <Button

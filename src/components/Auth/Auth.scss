@@ -25,8 +25,15 @@
         font-weight: bold;
         font-size: 14px;
         // text-decoration: none;
-        color: #0000ff;
+        color: #0000ff !important;
       }
+    }
+    .forgot-pass {
+      align-self: flex-end;
+      font-weight: 500;
+      font-size: 14px;
+      // text-decoration: none;
+      color: #0000ff !important;
     }
     .divider {
       margin: 10px 0;
@@ -47,6 +54,27 @@
       .or {
         font-weight: bold;
       }
+    }
+  }
+}
+
+.forgot-pass-form {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 450px;
+  margin: 30px auto;
+  padding: 16px;
+
+  .title {
+    margin: 16px 0;
+  }
+  .text-field {
+    width: 100%;
+  }
+  .otp-input {
+    margin: 16px 0;
+    input {
+      height: 20px;
     }
   }
 }

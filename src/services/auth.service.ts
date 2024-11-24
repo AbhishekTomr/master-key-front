@@ -14,7 +14,7 @@ export class AuthService {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(userSignUpData),
+      body: JSON.stringify({ ...userSignUpData, profile_img: "" }),
     };
     return fetch(
       `${this.endpoint}/auth/signup`,
@@ -92,7 +92,6 @@ export class AuthService {
   }
 
   async updateUserProfile(user: IUser) {
-    console.log("check this out", user);
     const formData = new FormData();
     formData.append("user_name", user.user_name);
     formData.append("profile_img", user.profileImg as string);
@@ -104,6 +103,61 @@ export class AuthService {
     };
     return fetch(
       `${this.endpoint}/auth/profile`,
+      requestOptions as RequestInit
+    ).then(responseHandler);
+  }
+
+  async updatePassword(passwordInfo: {
+    current_password: string;
+    updated_password: string;
+  }) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(passwordInfo),
+    };
+    return fetch(
+      `${this.endpoint}/auth/update-password`,
+      requestOptions as RequestInit
+    ).then(responseHandler);
+  }
+
+  async verifyEmail(email: string) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email: email }),
+    };
+    return fetch(
+      `${this.endpoint}/auth/verify/email`,
+      requestOptions as RequestInit
+    ).then(responseHandler);
+  }
+
+  async verifyOTP(email: string, otp: string) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email, otp }),
+    };
+    return fetch(
+      `${this.endpoint}/auth/verify/otp`,
+      requestOptions as RequestInit
+    ).then(responseHandler);
+  }
+
+  async resetPassword(new_password: string) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ new_password }),
+    };
+    return fetch(
+      `${this.endpoint}/auth/verify/reset-password`,
       requestOptions as RequestInit
     ).then(responseHandler);
   }

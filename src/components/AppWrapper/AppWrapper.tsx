@@ -6,6 +6,7 @@ import { useContext, useMemo } from "react";
 import { UserContext, IUserContext } from "../../context/user.context";
 import { Navigate } from "react-router-dom";
 import _ from "lodash";
+import ForgotPassForm from "../Auth/ForgotPassForm";
 
 interface IAppWrapperProps {}
 
@@ -17,6 +18,9 @@ const AppWrapper = ({}: IAppWrapperProps) => {
       <Routes>
         {!isLoggedIn && <Route path={`/auth/:authType`} Component={Auth} />}
         {isLoggedIn && <Route path={`/profile`} Component={Profile} />}
+        {!isLoggedIn && (
+          <Route path={"/forgot-pass"} Component={ForgotPassForm} />
+        )}
         <Route
           path="*"
           element={

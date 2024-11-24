@@ -13,6 +13,7 @@ import { deepOrange } from "@mui/material/colors";
 import Button from "../Common/Button";
 import { Size } from "../../constants";
 import EditProfilePopup from "./EditProfilePopup";
+import { EDIT_TYPES } from "../../types";
 
 const authService = new AuthService();
 
@@ -20,21 +21,24 @@ type Props = {};
 
 const Profile = (props: Props) => {
   const { user, setUser, isLoggedIn } = useContext<IUserContext>(UserContext);
-  const [editMode, setEditMode] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<EDIT_TYPES>(EDIT_TYPES.NONE);
 
   return (
     <div>
       {editMode && (
         <EditProfilePopup
-          show={editMode}
-          onClose={() => setEditMode(false)}
+          show={editMode !== EDIT_TYPES.NONE}
+          onClose={() => setEditMode(EDIT_TYPES.NONE)}
           user={user}
+          editMode={editMode}
         />
       )}
       <Card className="profile-card">
         <div className="control">
           <img
-            src={user.profileImg}
+            src={
+              "https://drive.google.com/file/d/1d7PEw8A_kyqcqS-Ynn8h5OSQhbVxVNGa/view?usp=drive_link"
+            }
             alt={`${user?.name[0]?.toLocaleUpperCase() || ""}`}
             style={{ width: 64, height: 64 }} // Optional: Adjust size
             className="profile-pic"
@@ -54,9 +58,18 @@ const Profile = (props: Props) => {
           <Button
             size={Size.SMALL}
             className="edit-profile-btn"
-            onClick={() => setEditMode(true)}
+            onClick={() => setEditMode(EDIT_TYPES.EDIT_PROFILE)}
           >
             Edit Profile
+          </Button>
+        </div>
+        <div className="control">
+          <Button
+            size={Size.SMALL}
+            className="edit-profile-btn"
+            onClick={() => setEditMode(EDIT_TYPES.CHANGE_PASSWORD)}
+          >
+            Change Password
           </Button>
         </div>
       </Card>

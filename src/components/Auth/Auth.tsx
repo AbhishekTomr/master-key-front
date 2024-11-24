@@ -276,6 +276,9 @@ const Auth = ({}: Props) => {
             {formType === AuthType.LOGIN ? "Sign Up" : "Login"}
           </Link>
         </div>
+        <Link className="forgot-pass link switch-link" to={"/forgot-pass"}>
+          Forgot Password ?
+        </Link>
         <div className="divider">
           <div className="h-div left-div"></div>
           <div className="or">Or</div>
