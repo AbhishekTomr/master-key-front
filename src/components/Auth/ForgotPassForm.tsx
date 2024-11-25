@@ -9,6 +9,7 @@ import { isEmpty } from "lodash";
 import Button from "../Common/Button";
 import { MuiOtpInput } from "mui-one-time-password-input";
 import { AuthService } from "../../services/auth.service";
+import { useNavigate } from "react-router-dom";
 
 const authService = new AuthService();
 
@@ -23,6 +24,7 @@ const ForgotPassForm = (props: Props) => {
     value: "",
     error: "",
   });
+  const navigate = useNavigate();
   const [otp, setOtp] = useState("");
 
   const submitBtnText = useMemo(() => {
@@ -54,9 +56,6 @@ const ForgotPassForm = (props: Props) => {
         setStep(ForgotPassSteps.DONE);
         //update new password
       }
-      if (step === ForgotPassSteps.DONE) {
-        //complete
-      }
     } catch (err) {
       console.error(err);
     }
@@ -76,8 +75,10 @@ const ForgotPassForm = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log("new pass", newPassword);
-  }, [newPassword]);
+    if (step === ForgotPassSteps.DONE) {
+      navigate("/auth/login");
+    }
+  }, [step]);
 
   const onValueChange = (key: string, value: string) => {
     const error = validateField(key, value);

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AuthService } from "../../services/auth.service";
 import { IUser } from "../../types";
 import { IUserSignUp } from "../Auth/types";
@@ -35,14 +35,11 @@ const Profile = (props: Props) => {
       )}
       <Card className="profile-card">
         <div className="control">
-          <img
-            src={
-              "https://drive.google.com/file/d/1d7PEw8A_kyqcqS-Ynn8h5OSQhbVxVNGa/view?usp=drive_link"
-            }
+          <Avatar
+            src={`http://localhost:3000/auth/profile/img/${user.profileImg}`}
             alt={`${user?.name[0]?.toLocaleUpperCase() || ""}`}
             style={{ width: 64, height: 64 }} // Optional: Adjust size
             className="profile-pic"
-            crossOrigin="anonymous"
           />
         </div>
         <div className="control">
