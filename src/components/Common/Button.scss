@@ -1,6 +1,9 @@
 .btn {
+  min-width: 100px !important;
   .loader {
-    display: block;
-    padding: 5px !important;
+    height: 100%;
+    width: 100%;
+  }
+  .small {
   }
 }

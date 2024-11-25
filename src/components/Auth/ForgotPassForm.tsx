@@ -10,6 +10,7 @@ import Button from "../Common/Button";
 import { MuiOtpInput } from "mui-one-time-password-input";
 import { AuthService } from "../../services/auth.service";
 import { useNavigate } from "react-router-dom";
+import { Size } from "../../constants";
 
 const authService = new AuthService();
 
@@ -26,6 +27,21 @@ const ForgotPassForm = (props: Props) => {
   });
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const activeBtn: boolean = useMemo(() => {
+    switch (step) {
+      case ForgotPassSteps.EMAIL_VERIFICATION:
+        //should be active when it has some value and error is zero.
+        return !isEmpty(email.value) && isEmpty(email.error);
+      case ForgotPassSteps.OTP_VERIFICATION:
+        return !isEmpty(otp);
+      case ForgotPassSteps.NEW_PASSWORD:
+        return !isEmpty(newPassword.value) && isEmpty(newPassword.error);
+      default:
+        return true;
+    }
+  }, [step, email, otp, newPassword]);
 
   const submitBtnText = useMemo(() => {
     switch (step) {
@@ -40,6 +56,7 @@ const ForgotPassForm = (props: Props) => {
 
   const resetPassword = async () => {
     try {
+      setIsLoading(true);
       if (step === ForgotPassSteps.EMAIL_VERIFICATION) {
         //perform email verification and send code to email
         const response = await authService.verifyEmail(email.value);
@@ -58,6 +75,8 @@ const ForgotPassForm = (props: Props) => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -128,7 +147,14 @@ const ForgotPassForm = (props: Props) => {
               error={newPassword.error}
             />
           )}
-          <Button onClick={resetPassword}>{submitBtnText}</Button>
+          <Button
+            onClick={resetPassword}
+            disabled={!activeBtn}
+            isLoading={isLoading}
+            size={Size.SMALL}
+          >
+            {submitBtnText}
+          </Button>
         </form>
       </Card>
     </div>

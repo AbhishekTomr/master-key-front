@@ -33,7 +33,11 @@ const Button = ({
       disabled={disabled}
     >
       {isLoading ? (
-        <CircularProgress size={"small"} className="loader" />
+        <CircularProgress
+          sx={{ color: "#ffffff" }}
+          className={`loader ${size}`}
+          size={24}
+        />
       ) : (
         children
       )}
